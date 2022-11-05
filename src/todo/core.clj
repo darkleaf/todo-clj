@@ -35,60 +35,59 @@
    [["/" {:get (di/ref `root-handler)}]]))
 
 ;; https://github.com/tastejs/todomvc-app-template
-(def layout
+(defn layout [body]
   (wt/compile
-   '[<>
-     "<!doctype html>"
-     [html
-      [head
-       [title "Todo Clj"]
-       [link {rel stylesheet href "https://unpkg.com/todomvc-app-css@2.4.2/index.css"}]]
-      [body
-       (:body)]]]))
+   [<>
+    "<!doctype html>"
+    [html
+     [head
+      [title "Todo Clj"]
+      [link {rel stylesheet href "https://unpkg.com/todomvc-app-css@2.4.2/index.css"}]]
+     [body ~body]]]))
 
 (def root-tmpl
-  (wt/compile
-   '[section.todoapp
-     [header.header
-      [h1 "todos"]
-      [form
-       [input.new-todo {placeholder "What needs to be done?"
-                        autofocus   true}]]]
-     [section.main
-      [input#toggle-all.toggle-all {type checkbox}]
-      [label {for toggle-all} "Mark all as complete"]
-      [ul.todo-list
-       (:todos
-        [li {class {completed (:completed)}}
-         [.view
-          [input.toggle {type checkbox checked (:completed)}]
-          [label (:title)]
-          [button.destroy]]
-         [input.edit {value "Create a TodoMVC template"}]])
+  (-> [section.todoapp
+       [header.header
+        [h1 "todos"]
+        [form
+         [input.new-todo {placeholder "What needs to be done?"
+                          autofocus   true}]]]
+       [section.main
+        [input#toggle-all.toggle-all {type checkbox}]
+        [label {for toggle-all} "Mark all as complete"]
+        [ul.todo-list
+         (:todos
+          [li {class {completed (:completed)}}
+           [.view
+            [input.toggle {type checkbox checked (:completed)}]
+            [label (:title)]
+            [button.destroy]]
+           [input.edit {value "Create a TodoMVC template"}]])
 
-       #_#_
-       [li.completed
-        [.view
-         [input.toggle {type checkbox checked true}]
-         [label "Taste JavaScript"]
-         [button.destroy]]
-        [input.edit {value "Create a TodoMVC template"}]]
-       [li #_.editing
-        [.view
-         [input.toggle {type checkbox}]
-         [label "Buy a unicorn"]
-         [button.destroy]]
-        [input.edit {value "Rule the web"}]]]]
-     [footer.footer
-      [span.todo-count
-       [strong 0]
-       "item left"]
-      #_...]]))
+         #_#_
+         [li.completed
+          [.view
+           [input.toggle {type checkbox checked true}]
+           [label "Taste JavaScript"]
+           [button.destroy]]
+          [input.edit {value "Create a TodoMVC template"}]]
+         [li #_.editing
+          [.view
+           [input.toggle {type checkbox}]
+           [label "Buy a unicorn"]
+           [button.destroy]]
+          [input.edit {value "Rule the web"}]]]]
+       [footer.footer
+        [span.todo-count
+         [strong 0]
+         "item left"]
+        #_...]]
+      wt/compile
+      layout))
 
 (defn root-handler [{db `db} req]
   (r.resp/ok
-   (wt/render-to-string layout {:body root-tmpl
-                                :todos @db})))
+   (wt/render-to-string root-tmpl {:todos @db})))
 
 
 

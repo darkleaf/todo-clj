@@ -2,8 +2,7 @@
  :deps  {org.clojure/clojure                {:mvn/version "1.11.1"}
          org.clojars.darkleaf/di            {:git/url "https://github.com/darkleaf/di.git"
                                              :sha     "e25457fc14603d8baa06cd763758adca177b733a"}
-         org.clojars.darkleaf/web-templates {:git/url "https://github.com/darkleaf/web-template.git"
-                                             :sha     "24fbcff2e5503eb7c7fe3d75e1f75da49c5e76e1"}
+         org.clojars.darkleaf/web-templates {:local/root "../web-template"}
          ring/ring-core                     {:mvn/version "1.9.6"}
          ring/ring-jetty-adapter            {:mvn/version "1.9.6"}
          ring/ring-mock                     {:mvn/version "0.4.0"}
