@@ -1,0 +1,17 @@
+{:paths ["src" "test" "resources"]
+ :deps  {org.clojure/clojure                {:mvn/version "1.11.1"}
+         org.clojars.darkleaf/di            {:git/url "https://github.com/darkleaf/di.git"
+                                             :sha     "e25457fc14603d8baa06cd763758adca177b733a"}
+         org.clojars.darkleaf/web-templates {:git/url "https://github.com/darkleaf/web-template.git"
+                                             :sha     "24fbcff2e5503eb7c7fe3d75e1f75da49c5e76e1"}
+         ring/ring-core                     {:mvn/version "1.9.6"}
+         ring/ring-jetty-adapter            {:mvn/version "1.9.6"}
+         ring/ring-mock                     {:mvn/version "0.4.0"}
+         metosin/reitit-core                {:mvn/version "0.5.18"}
+         metosin/reitit-ring                {:mvn/version "0.5.18"}
+         metosin/ring-http-response         {:mvn/version "0.9.3"}
+         #_#_#_#_#_#_#_#_
+         com.h2database/h2                  {:mvn/version "2.1.210"}
+         com.github.seancorfield/next.jdbc  {:mvn/version "1.2.780"}
+         hikari-cp/hikari-cp                {:mvn/version "2.14.0"}
+         org.flywaydb/flyway-core           {:mvn/version "9.6.0"}}}
