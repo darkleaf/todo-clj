@@ -5,7 +5,8 @@
    [darkleaf.web-template.core :as wt]
    [reitit.ring :as r]
    [ring.adapter.jetty :as jetty]
-   [ring.util.http-response :as r.resp])
+   [ring.util.http-response :as r.resp]
+   [ring.middleware.params :as r.params])
   (:import
    [org.eclipse.jetty.server Server]))
 
@@ -20,7 +21,9 @@
 (defn handler [{route-data `route-data}]
   (-> route-data
       (r/router)
-      (r/ring-handler (fn [_] (r.resp/not-found)))))
+      (r/ring-handler
+       (fn [_] (r.resp/not-found))
+       {:middleware [r.params/wrap-params]})))
 
 (defn jetty [{handler `handler}]
   (jetty/run-jetty handler {:join? false :port 8585}))
@@ -32,7 +35,8 @@
 
 (def route-data
   (di/template
-   [["/" {:get (di/ref `root-handler)}]]))
+   [["/" {:get (di/ref `root-handler)}]
+    ["/todos" {:post (di/ref `new-todo-handler)}]]))
 
 ;; https://github.com/tastejs/todomvc-app-template
 (defn layout [body]
@@ -42,6 +46,7 @@
     [html
      [head
       [title "Todo Clj"]
+      [script {src "https://unpkg.com/@hotwired/turbo@7.2.4/dist/turbo.es2017-umd.js"}]
       [link {rel stylesheet href "https://unpkg.com/todomvc-app-css@2.4.2/index.css"}]]
      [body ~body]]]))
 
@@ -49,15 +54,17 @@
   (-> [section.todoapp
        [header.header
         [h1 "todos"]
-        [form
+        [form {action "/todos" method post}
          [input.new-todo {placeholder "What needs to be done?"
-                          autofocus   true}]]]
+                          autofocus   true
+                          name        title}]]]
        [section.main
         [input#toggle-all.toggle-all {type checkbox}]
         [label {for toggle-all} "Mark all as complete"]
         [ul.todo-list
          (:todos
-          [li {class {completed (:completed)}}
+          [li {class {completed (:completed)}
+               id    (:id)}
            [.view
             [input.toggle {type checkbox checked (:completed)}]
             [label (:title)]
@@ -86,9 +93,16 @@
       layout))
 
 (defn root-handler [{db `db} req]
-  (r.resp/ok
-   (wt/render-to-string root-tmpl {:todos @db})))
+  (-> (r.resp/ok
+       (wt/render-to-string root-tmpl {:todos @db}))
+      (r.resp/content-type "text/html")))
 
+(defn new-todo-handler [{db `db} req]
+  (let [title (get-in req [:form-params "title"])]
+    (swap! db conj {:id        (random-uuid)
+                    :completed false
+                    :title     title}))
+  (r.resp/see-other "/"))
 
 
 (defonce root (atom nil))
@@ -102,4 +116,7 @@
 (comment
   (start)
   (stop)
+  (do
+    (stop)
+    (start))
   nil)
